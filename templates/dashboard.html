@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    DonorBro | Hospital Dashboard
+{% endblock %}
+
+{% block body %}
+<header class="primary-container">
+  <nav>
+    <h6 class="max center-align">Hospital Dashboard: {{hospital_name}}</h6>
+    <button class="circle transparent">
+      <img class="responsive" src="/static/icon.png">
+    </button>
+  </nav>
+</header>
+<br><br>
+
+<div class="padding">
+    {% if pending_req_sector %}
+    <h5 class="error-text">⚠️ Urgent Requests in Your Sector ({{sector_hash}})</h5>
+    <ul class="list border bottom-margin">
+        {% for req in pending_req_sector %}
+            <li>
+                <details>
+                    <summary class="error">
+                        {{req["request_id"]}} | {{req["urgency"]}} 
+                        <img style="float: right; width: 1.5rem;" src="/static/menu.svg">
+                    </summary>
+                    <ul class="list border">
+                        <li><strong>Patient ID:</strong> {{req["patient_id"]}}</li>
+                        <li><strong>Blood Group:</strong> {{req["need"]}}</li>
+                        <li><strong>Resource:</strong> {{req["resource_type"]}}</li>
+                        <li><strong>Created:</strong> {{req["created_at"]}}</li>
+                        <li>
+                            <form action="{{ url_for('web_hospital_bp.verify_request') }}" method="POST">
+                                <input type="hidden" name="request_id" value="{{req['request_id']}}">
+                                <button type="submit" class="error">Verify & Approve Request</button>
+                            </form>
+                        </li>
+                    </ul>
+                </details>
+            </li>
+        {% endfor %}
+    </ul>
+    <br>
+    {% endif %}
+
+    {% if pending_requests %}
+    <h5>Pending Requests (Global)</h5>
+    <ul class="list border bottom-margin">
+        {% for req in pending_requests %}
+            <li>
+                <details>
+                    <summary class="primary">
+                        {{req["request_id"]}} | {{req["need"]}}
+                        <img style="float: right; width: 1.5rem;" src="/static/menu.svg">
+                    </summary>
+                    <ul class="list border">
+                        <li><strong>Patient ID:</strong> {{req["patient_id"]}}</li>
+                        <li><strong>Urgency:</strong> {{req["urgency"]}}</li>
+                        <li><strong>Resource:</strong> {{req["resource_type"]}}</li>
+                        <li><strong>Created:</strong> {{req["created_at"]}}</li>
+                        <li>
+                            <form action="{{ url_for('web_hospital_bp.verify_request') }}" method="POST">
+                                <input type="hidden" name="request_id" value="{{req['request_id']}}">
+                                <button type="submit" class="primary">Approve Request</button>
+                            </form>
+                        </li>
+                    </ul>
+                </details>
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>No global pending requests.</p>
+    {% endif %}
+
+    <div class="divider"></div>
+    <br>
+
+    {% if pending_user_sector %}
+    <h5 class="tertiary-text">Users Waiting for Verification (Your Sector)</h5>
+    <ul class="list border bottom-margin">
+        {% for user in pending_user_sector %}
+            <li>
+                <details>
+                    <summary class="tertiary">
+                        {{user["anon_id"]}} | {{user["role"]}}
+                        <img style="float: right; width: 1.5rem;" src="/static/menu.svg">
+                    </summary>
+                    <ul class="list border">
+                        <li><strong>Blood Type:</strong> {{user["blood_type"]}}</li>
+                        <li><strong>Sector:</strong> {{user["sector_hash"]}}</li>
+                        <li><strong>Heartbeat:</strong> {{user["last_heartbeat"]}}</li>
+                        <li>
+                            <form action="{{ url_for('web_hospital_bp.verify_user') }}" method="POST">
+                                <input type="hidden" name="user_id" value="{{user['anon_id']}}">
+                                <button type="submit" class="tertiary">Verify Identity</button>
+                            </form>
+                        </li>
+                    </ul>
+                </details>
+            </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if pending_users %}
+    <h5>Unverified Users (Global)</h5>
+    <ul class="list border bottom-margin">
+        {% for user in pending_users %}
+            <li>
+                <details>
+                    <summary>
+                        {{user["anon_id"]}} | {{user["role"]}}
+                        <img style="float: right; width: 1.5rem;" src="/static/menu.svg">
+                    </summary>
+                    <ul class="list border">
+                        <li><strong>Blood Type:</strong> {{user["blood_type"]}}</li>
+                        <li><strong>Sector:</strong> {{user["sector_hash"]}}</li>
+                        <li>
+                            <form action="{{ url_for('web_hospital_bp.verify_user') }}" method="POST">
+                                <input type="hidden" name="user_id" value="{{user['anon_id']}}">
+                                <button type="submit">Verify User</button>
+                            </form>
+                        </li>
+                    </ul>
+                </details>
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>No new users to verify.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

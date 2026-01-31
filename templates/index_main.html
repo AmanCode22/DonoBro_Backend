@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DonorBro | Forensic Network Architecture</title>
+
+<link href="https://cdn.jsdelivr.net/npm/beercss@3.5.1/dist/cdn/beer.min.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.5.1/dist/cdn/beer.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ======================
+   CORE TOKENS
+====================== */
+:root {
+    --primary: #00e676; 
+    --online: #00e676;
+    --offline: #ff1744;
+
+    --bg: #050505;
+    --glass-bg: rgba(10, 10, 10, 0.95); 
+    --glass-border: rgba(255, 255, 255, 0.1);
+
+    --glow-primary: 0 0 25px rgba(0, 230, 118, 0.3);
+    
+    --space-4: 32px; 
+    --radius-md: 16px;
+    
+    --text-hero: clamp(2.5rem, 8vw, 5rem); 
+}
+
+/* ======================
+   BASE & RESET
+====================== */
+body {
+    margin: 0;
+    background: var(--bg);
+    background-image: 
+        linear-gradient(rgba(50, 50, 50, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(50, 50, 50, 0.15) 1px, transparent 1px);
+    background-size: 40px 40px;
+    color: #eee;
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ======================
+   LAYOUT ENGINE
+====================== */
+.wrapper {
+    max-width: 1400px;
+    margin: auto;
+    padding: var(--space-4);
+}
+
+@media(max-width: 600px) {
+    .wrapper { padding: 20px; }
+    .section { margin-top: 40px !important; }
+}
+
+.section { margin-top: 80px; }
+
+.smart-grid {
+    display: grid;
+    gap: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    align-items: stretch;
+}
+
+/* ======================
+   GLASS CARDS & UI
+====================== */
+.cyber-glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden; 
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+}
+
+/* Scanline Effect */
+.cyber-glass::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom,
+        transparent 49%,
+        rgba(0, 230, 118, 0.03) 50%,
+        transparent 51%
+    );
+    animation: scanline 6s linear infinite;
+    pointer-events: none;
+}
+
+.cyber-glass:hover {
+    border-color: var(--primary);
+    box-shadow: var(--glow-primary);
+    transform: translateY(-5px);
+}
+
+/* ======================
+   ANIMATIONS
+====================== */
+@keyframes scanline {
+    0% { transform: translateY(-50%); }
+    100% { transform: translateY(50%); }
+}
+
+@keyframes pulse-green {
+    0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(0, 230, 118, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes ticker {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+/* ======================
+   TYPOGRAPHY
+====================== */
+.hero-title {
+    font-size: var(--text-hero);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    margin: 0 0 20px 0;
+    background: linear-gradient(180deg, #fff 30%, #666 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: 0.3s;
+}
+
+.hero-title:hover {
+    text-shadow: 2px 2px 0px rgba(0, 230, 118, 0.2);
+}
+
+.large-text { font-size: 1.1rem; line-height: 1.6; color: #bbb; font-weight: 300; }
+.mono { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; }
+
+.text-green { color: var(--primary); }
+.upper { text-transform: uppercase; }
+
+/* ======================
+   BUTTONS
+====================== */
+button {
+    height: 54px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s;
+}
+
+.btn-fill { background: var(--primary); color: #000; border: none; box-shadow: var(--glow-primary); }
+.btn-fill:hover { transform: scale(1.02); box-shadow: 0 0 35px rgba(0, 230, 118, 0.5); }
+
+.btn-border { background: transparent; border: 1px solid #444; color: #eee; }
+.btn-border:hover { border-color: var(--primary); color: var(--primary); background: rgba(0, 230, 118, 0.05); }
+
+.btn-group { display: flex; gap: 16px; margin-top: 30px; }
+@media(max-width: 600px) { .btn-group { flex-direction: column; } }
+
+/* ======================
+   STATUS & TICKER
+====================== */
+.row { display: flex; align-items: center; }
+.space-between { justify-content: space-between; }
+.margin-bottom { margin-bottom: 16px; }
+
+.status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+.dot-green { background: var(--primary); animation: pulse-green 2s infinite; }
+
+.ticker-wrap {
+    width: 100%;
+    overflow: hidden;
+    background: #000;
+    border-top: 1px solid #222;
+    border-bottom: 1px solid #222;
+    padding: 10px 0;
+    white-space: nowrap;
+}
+.ticker { display: inline-block; animation: ticker 30s linear infinite; }
+.ticker-item { display: inline-block; padding: 0 2rem; color: #444; font-family: monospace; font-size: 0.8rem; }
+
+/* ======================
+   DOWNLOAD BUTTONS
+====================== */
+.download-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+.dl-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #333;
+    color: #bbb;
+    padding: 12px;
+    font-size: 0.8rem;
+    text-align: center;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+.dl-btn:hover { background: rgba(0, 230, 118, 0.1); border-color: var(--primary); color: #fff; }
+
+/* ======================
+   MOCKUPS
+====================== */
+.mockup-window {
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 16/9; 
+    min-height: 200px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="ticker-wrap">
+    <div class="ticker">
+        <span class="ticker-item">BLOCK #1042 [HASH: 7f2a9...]</span>
+        <span class="ticker-item">BLOCK #1043 [HASH: 8c1d4...]</span>
+        <span class="ticker-item text-green">NEW_NODE_SYNCED (TOKYO)</span>
+        <span class="ticker-item">BLOCK #1044 [HASH: 9e3f1...]</span>
+        <span class="ticker-item text-green">MALICIOUS_PACKET_DROPPED</span>
+        <span class="ticker-item text-green">EVIDENCE_VAULT_LOCKED</span>
+    </div>
+</div>
+
+<div class="wrapper" style="padding-bottom: 0;">
+    <nav class="row space-between">
+        <div class="row">
+            <img src="{{ url_for('static', filename='icon.png') }}" 
+                 style="height:44px; width:44px; border:1px solid var(--primary); border-radius:12px; padding:4px;">
+            <div style="margin-left: 12px;">
+                <h6 class="margin-none upper" style="font-weight: 800; font-size: 1.1rem; line-height: 1;">DonorBro</h6>
+                <div class="mono text-green" style="font-size: 0.7rem; margin-top: 4px;">SECURE_NET_V1</div>
+            </div>
+        </div>
+        
+        <div>
+            <a href="{{ url_for('web_hospital_bp.login_hospital') }}">
+                <button class="btn-border small mono" style="height: 40px; padding: 0 20px; font-size: 0.8rem;">
+                    <i>verified_user</i> STAFF LOGIN
+                </button>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper section smart-grid">
+
+    <div>
+        <div class="mono text-green" style="font-size: 0.8rem; border: 1px solid var(--primary); display: inline-block; padding: 6px 12px; border-radius: 50px; background: rgba(0, 230, 118, 0.1); margin-bottom: 20px;">
+            <i class="tiny">gavel</i> COURT ADMISSIBLE LOGS
+        </div>
+
+        <h1 class="hero-title">
+            The Evidence<br>Is Immutable.
+        </h1>
+
+        <p class="large-text">
+            A privacy-centric infrastructure designed to solve the 4 million unit blood deficit. 
+            Powered by <b style="color: #fff;">Tauri v2</b> and <b style="color: #fff;">Dual-Inference AI</b>, 
+            DonorBro replaces manual registries with an automated, local-first coordination engine.
+        </p>
+
+        <div class="btn-group">
+            <a href="#downloads" style="flex: 1;">
+                <button class="btn-fill mono">
+                    <i>download</i> GET APP
+                </button>
+            </a>
+            <a href="{{ url_for('admin_blueprint.login_admin') }}" style="flex: 1;">
+                <button class="btn-border mono">
+                    <i>shield</i> ADMIN
+                </button>
+            </a>
+        </div>
+    </div>
+
+    <div class="cyber-glass">
+        <div class="row space-between margin-bottom" style="border-bottom: 1px solid #333; padding-bottom: 16px;">
+            <div class="row">
+                <i class="text-green" style="animation: float 3s ease-in-out infinite;">hub</i>
+                <span class="mono upper text-white" style="margin-left: 10px;">System_Status</span>
+            </div>
+            <span class="mono text-green" style="font-size: 0.75rem;">PING: 12ms</span>
+        </div>
+
+        <div class="row space-between margin-bottom">
+            <span class="mono" style="font-size: 0.9rem;">API (PYTHON/FLASK)</span>
+            <span class="mono text-green" style="font-size: 0.75rem;">
+                <span class="status-dot dot-green"></span> ACTIVE
+            </span>
+        </div>
+        <div class="row space-between margin-bottom">
+            <span class="mono" style="font-size: 0.9rem;">SSE STREAM (R-TIME)</span>
+            <span class="mono text-green" style="font-size: 0.75rem;">
+                <span class="status-dot dot-green"></span> CONNECTED
+            </span>
+        </div>
+        
+        <div style="height: 1px; background: #333; margin: 10px 0 20px 0;"></div>
+
+        <div class="row space-between margin-bottom">
+            <span class="mono text-green" style="font-size: 0.9rem;">CLIENT (TAURI V2)</span>
+            <span class="mono text-green" style="font-size: 0.75rem;">
+                <span class="status-dot dot-green"></span> BUILDING UI
+            </span>
+        </div>
+        <div class="row space-between">
+            <span class="mono text-green" style="font-size: 0.9rem;">AI ENGINE (LITE_RT)</span>
+            <span class="mono text-green" style="font-size: 0.75rem;">
+                <span class="status-dot dot-green"></span> LOADED
+            </span>
+        </div>
+    </div>
+
+</div>
+
+<div class="wrapper section">
+    <h5 class="mono text-green upper">>> Operational Flow</h5>
+
+    <div class="smart-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+        
+        <div class="cyber-glass" style="align-items: center; text-align: center;">
+            <i class="extra text-green" style="animation: float 4s ease-in-out infinite;">fingerprint</i>
+            <h6 style="margin: 15px 0 5px 0;">1. Anonymize</h6>
+            <p class="small-text" style="color:#aaa; font-size: 0.9rem;">
+                Prevents the 60% deterrence rate caused by harassment. Identity is stripped; only a unique <span class="mono">DONOR-ID</span> exists.
+            </p>
+        </div>
+
+        <div class="cyber-glass" style="align-items: center; text-align: center;">
+            <i class="extra text-green" style="animation: float 4s ease-in-out infinite 1s;">bolt</i>
+            <h6 style="margin: 15px 0 5px 0;">2. SSE Latency</h6>
+            <p class="small-text" style="color:#aaa; font-size: 0.9rem;">
+                Server-Sent Events push alerts instantly, cutting the 4-6 hour manual coordination time to minutes.
+            </p>
+        </div>
+
+        <div class="cyber-glass" style="align-items: center; text-align: center;">
+            <i class="extra text-green" style="animation: float 4s ease-in-out infinite 2s;">lock</i>
+            <h6 style="margin: 15px 0 5px 0;">3. Evidence Lock</h6>
+            <p class="small-text" style="color:#aaa; font-size: 0.9rem;">
+                Match confirmed. Chat logs are encrypted into the Police Evidence Vault instantly to prevent fraud.
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<div class="wrapper section">
+    <h5 class="mono text-green upper">>> Technical Specs</h5>
+
+    <div class="smart-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        
+        <div class="cyber-glass">
+            <div class="row margin-bottom">
+                <i class="large text-green">memory</i>
+                <h6 class="margin-none" style="margin-left: 12px;">Dual-Inference AI</h6>
+            </div>
+            <p class="large-text" style="font-size: 0.95rem;">
+                Dynamic hardware detection switches between <b>LiteRT (TFLite)</b> for low-end devices and <b>llama.cpp (GGUF)</b> for high-performance GPUs.
+            </p>
+        </div>
+
+        <div class="cyber-glass">
+            <div class="row margin-bottom">
+                <i class="large text-green">dns</i>
+                <h6 class="margin-none" style="margin-left: 12px;">Forensic Backend</h6>
+            </div>
+            <p class="large-text" style="font-size: 0.95rem;">
+                <b>Python + Flask + SQLite.</b> Replaces Firebase with <b>Server-Sent Events (SSE)</b>, utilizing 1.4x less battery than WebSockets.
+            </p>
+        </div>
+
+        <div class="cyber-glass">
+            <div class="row margin-bottom">
+                <i class="large text-green">verified</i>
+                <h6 class="margin-none" style="margin-left: 12px;">Data Sovereignty</h6>
+            </div>
+            <p class="large-text" style="font-size: 0.95rem;">
+                Supports <b>ABHA Integration</b> and local <b>On-Device OCR</b>. Medical data is parsed locally via Rust without leaving the device.
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<div id="downloads" class="wrapper section">
+    <h5 class="mono text-green upper">>> Select Client</h5>
+    
+    <div class="smart-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+        
+        <div class="cyber-glass" style="align-items: center; text-align: center;">
+            <i class="extra text-green">terminal</i>
+            <h6 style="margin: 10px 0;">Linux</h6>
+            <p class="mono text-green" style="font-size: 0.7rem;">TAURI (RUST)</p>
+            <div class="download-grid" style="width: 100%;">
+                <a href="{{ url_for('maintenance_route') }}" class="dl-btn"><i class="tiny">extension</i> AppImage</a>
+                <a href="{{ url_for('maintenance_route') }}" class="dl-btn"><i class="tiny">deployed_code</i> .deb</a>
+                <a href="{{ url_for('maintenance_route') }}" class="dl-btn"><i class="tiny">settings</i> .rpm</a>
+                <a href="{{ url_for('maintenance_route') }}" class="dl-btn"><i class="tiny">build</i> AUR</a>
+            </div>
+        </div>
+
+        <div class="cyber-glass" style="align-items: center; text-align: center;">
+            <i class="extra" style="color: #00A4EF;">window</i>
+            <h6 style="margin: 10px 0;">Windows</h6>
+            <p class="mono text-green" style="font-size: 0.7rem;">TAURI (RUST)</p>
+            <div class="download-grid" style="width: 100%;">
+                <a href="{{ url_for('maintenance_route') }}" class="dl-btn">
+                    <i class="tiny">install_desktop</i> .EXE
+                </a>
+                <a href="{{ url_for('maintenance_route') }}" class="dl-btn">
+                    <i class="tiny">admin_panel_settings</i> .MSI
+                </a>
+            </div>
+            <p class="small-text mono margin-top" style="color: #555; font-size: 0.7rem;">x64 / ARM64 Supported</p>
+        </div>
+
+        <div class="cyber-glass" style="align-items: center; text-align: center;">
+            <i class="extra" style="color: #3DDC84;">android</i>
+            <h6 style="margin: 10px 0;">Android</h6>
+            <p class="mono text-green" style="font-size: 0.7rem;">TAURI (RUST)</p>
+            <div style="margin-top: 15px; width: 100%;">
+                <a href="{{ url_for('maintenance_route') }}">
+                    <button class="btn-border mono small">DOWNLOAD .APK</button>
+                </a>
+            </div>
+            <p class="small-text mono margin-top" style="color: #555; font-size: 0.7rem;">LiteRT + NPU Enabled</p>
+        </div>
+
+        <div class="cyber-glass" style="align-items: center; text-align: center;">
+            <i class="extra text-green">public</i>
+            <h6 style="margin: 10px 0;">Web Portal</h6>
+            <p class="mono text-green" style="font-size: 0.7rem;">REACT + FLASK</p>
+            <div style="margin-top: 15px; width: 100%;">
+                <a href="{{ url_for('maintenance_route') }}">
+                    <button class="btn-border mono small">LAUNCH APP</button>
+                </a>
+            </div>
+            <p class="small-text mono margin-top" style="color: #555; font-size: 0.7rem;">Zero-Install Access</p>
+        </div>
+
+    </div>
+</div>
+
+<footer style="background: #000; border-top: 1px solid #222; margin-top: 60px; padding: 40px 0;">
+    <div class="wrapper">
+        <div class="smart-grid" style="align-items: flex-start;">
+            
+            <div>
+                <h6 class="upper margin-none" style="letter-spacing: 2px;">DonorBro</h6>
+                <p class="mono text-green small-text">Forensic Network</p>
+                <p class="small-text" style="color: #666; font-size: 0.8rem;">
+                    © 2026 DonorBro Network.<br>
+                    Licensed under MIT Open Source.
+                </p>
+            </div>
+
+            <div style="text-align: left;">
+                <p class="mono upper text-white small-text">Authorized Access</p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <a href="{{ url_for('web_hospital_bp.login_hospital') }}">
+                        <button class="btn-border small" style="width: auto; padding: 0 16px; border-color: #333; color: #888;">Hospital</button>
+                    </a>
+                    <a href="{{ url_for('admin_blueprint.login_admin') }}">
+                        <button class="btn-border small" style="width: auto; padding: 0 16px; border-color: #333; color: #888;">Admin</button>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+</body> 
+</html>

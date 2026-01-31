@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.13.3/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.13.3/dist/cdn/beer.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+    
+    <title>{% block title %}DonorBro{% endblock %}</title>
+
+    <style>
+        
+        :root body.dark {
+            /* CHANGED: Primary Accent to Cyber Green */
+            --primary: #00e676;
+            --on-primary: #000000;
+            --primary-container: #00210E;
+            --on-primary-container: #66FFA6;
+
+            /* Secondary: Desaturated Green/Grey */
+            --secondary: #BCCBB1;
+            --on-secondary: #273422;
+            --secondary-container: #3D4B37;
+            --on-secondary-container: #D8E7CC;
+
+            /* Tertiary: Teal/Cyan tone */
+            --tertiary: #A0CFD0;
+            --on-tertiary: #003738;
+            --tertiary-container: #1E4E4F;
+            --on-tertiary-container: #BCEBEB;
+
+            --error: #ffb4ab;
+            --on-error: #690005;
+            --error-container: #93000a;
+            --on-error-container: #ffdad5;
+
+            /* CHANGED: Backgrounds to Deep Black to match Index */
+            --background: #050505;
+            --on-background: #e3e2e6;
+
+            --surface: #0a0a0a;
+            --on-surface: #e3e2e6;
+
+            --surface-variant: #44474f;
+            --on-surface-variant: #c4c6d0;
+
+            --outline: #8e9099;
+            --outline-variant: #44474f;
+
+            --shadow: #000000;
+            --scrim: #000000;
+
+            --inverse-surface: #e3e2e6;
+            --inverse-on-surface: #2f3033;
+            --inverse-primary: #00e676; /* Green for inverse actions */
+
+            /* Darker Surface Tones */
+            --surface-dim: #050505;
+            --surface-bright: #39393c;
+            --surface-container-lowest: #000000;
+            --surface-container-low: #0a0a0a;
+            --surface-container: #141414;
+            --surface-container-high: #1f1f1f;
+            --surface-container-highest: #2a2a2d;
+        }
+
+       
+        .snackbar-container {
+            z-index: 9999;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
+    
+    {% block head %}{% endblock %}
+</head>
+
+<body class="dark">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="snackbar-container">
+                {% for category, message in messages %}
+                    <div class="snackbar active {{ 'primary' if category == 'success' else 'error' }}">
+                        <i>{{ 'check_circle' if category == 'success' else 'warning' }}</i>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block body %}{% endblock %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const snacks = document.querySelectorAll('.snackbar.active');
+            if (snacks.length > 0) {
+                setTimeout(() => {
+                    snacks.forEach(s => s.classList.remove('active'));
+                }, 4000); 
+            }
+        });
+    </script>
+
+    {% block afterbody %}{% endblock %}
+</body>
+</html>

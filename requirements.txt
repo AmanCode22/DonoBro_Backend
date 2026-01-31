@@ -1,0 +1,8 @@
+flask
+python-dotenv
+flask-cors
+Flask-Session
+Werkzeug
+urllib3>2
+gevent
+gunicorn

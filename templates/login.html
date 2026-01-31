@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    DonorBro | Hospital Portal
+{% endblock %}
+
+{% block body %}
+<br><br>
+<h1 class="top-margin bottom-margin center-align">Hospital Login</h1><br><br>
+<form action="/hospital/login" method="POST" >
+      <div class="field label border round fill large top-margin large-width center">
+  <input type="text" name="hospital_id">
+  <label>Enter Username</label>
+</div>
+<div class="field label suffix border round fill large top-margin large-width center">
+  <input id="password_input" type="password" name="password">
+  <label>Password</label>
+  <i  class="front show" id="show_password" ><img id="eye_image" style="z-index:99999;" src="/static/eye.svg"></i></div>
+
+<button class="large center top-margin" type="submit">Login Now!</button>
+</form>
+    {% endblock %}
+    {% block afterbody %}
+        <script>
+    const eye_icon=document.getElementById("show_password");
+    const password_input=document.getElementById("password_input");
+    const eye_image=document.getElementById("eye_image");
+    eye_image.addEventListener("click",()=>{
+        if (eye_icon.classList.contains("show")) {
+            eye_icon.classList.replace("show","hide");
+            password_input.setAttribute("type","text");
+            eye_image.setAttribute("src","/static/eye-slash.svg");
+        }
+        else{
+            eye_icon.classList.replace("hide","show");
+            password_input.setAttribute("type","password");
+            eye_image.setAttribute("src","/static/eye.svg");
+        }
+    })
+</script>
+    {% endblock %}
+
+   

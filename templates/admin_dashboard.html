@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    DonorBro | Admin Dashboard
+{% endblock %}
+
+{% block body %}
+    <header class="primary-container">
+  <nav>
+    <h6 class="max center-align">DonorBro Admin Dashboard</h6>
+    <button class="circle transparent">
+      <img class="responsive" src="/favicon.ico">
+    </button>
+  </nav>
+</header>
+<br><br>
+
+{% if hospitals!=[] %}
+<div>
+<h2 >Current Hospitals</h2><br>
+<ul class="list border bottom-margin">
+{% for hospital in hospitals %}
+    <li>
+        <details>
+            <summary class="primary">{{hospital["name"]}} <img  style="float: right;align-self:right;width: 1.5rem;height: 3rem;" src="/static/menu.svg"></summary>
+            <ul class="list border">
+                <li>Hospital ID: {{hospital["hospital_id"]}}</li>
+                <li>Location: {{hospital["location"]}}</li>
+                <li>Sector Hash: {{hospital["sector_hash"]}}</li>
+                <li><button data-hospital-id="{{hospital['hospital_id']}}" class="hospital_delete">Delete Hospital</button></li>
+            </ul>
+        </details>
+    </li>
+{% endfor %}
+</ul>
+</div
+{% endif %}
+<br>
+<div>
+<h2>Create New Hospital</h2>
+<form action="/admin/create" method="POST" >
+      <div class="field label border round fill large top-margin large-width ">
+  <input type="text" name="name">
+  <label>Enter name of hospital</label>
+</div>
+<div class="field label border round fill large top-margin large-width ">
+  <input type="text" name="location">
+  <label>Enter location of hospital</label>
+</div>
+<div class="field label border round fill large top-margin large-width">
+  <input type="text" name="sector_hash">
+  <label>Enter sector hash of hospital</label>
+</div>
+<div class="field label suffix border round fill large top-margin large-width">
+  <input id="password_input" type="password" name="password">
+  <label>Enter Hospital Password</label>
+  <i  class="front show" id="show_password" ><img id="eye_image" style="z-index:99999;" src="/static/eye.svg"></i></div>
+
+<button class="large top-margin" type="submit">Create Hospital</button>
+</form>
+</div>
+{% endblock %}
+  {% block afterbody %}
+        <script>
+          // password hide/show ki script
+    const eye_icon=document.getElementById("show_password");
+    const password_input=document.getElementById("password_input");
+    const eye_image=document.getElementById("eye_image");
+    eye_image.addEventListener("click",()=>{
+        if (eye_icon.classList.contains("show")) {
+            eye_icon.classList.replace("show","hide");
+            password_input.setAttribute("type","text");
+            eye_image.setAttribute("src","/static/eye-slash.svg");
+        }
+        else{
+            eye_icon.classList.replace("hide","show");
+            password_input.setAttribute("type","password");
+            eye_image.setAttribute("src","/static/eye.svg");
+        }
+    })
+
+    // hospital delete ki script
+const hospital_delete_btns=document.querySelectorAll(".hospital_delete");
+hospital_delete_btns.forEach(btn => {
+  btn.addEventListener("click",()=>{
+    const hospital_id=btn.getAttribute("data-hospital-id");
+    if (confirm(`Do you want to delete hospital with id ${hospital_id}`)){
+      const form = document.createElement("form");
+      form.action="/admin/delete";
+      form.method="POST";
+      const input = document.createElement("input");
+      input.type="hidden";
+      input.name="hospital_id";
+      input.value=hospital_id;
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit()
+    }
+  })
+});
+    
+</script>
+    {% endblock %}
+
+
+  

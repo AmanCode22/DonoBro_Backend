@@ -1,0 +1,5 @@
+__pycache__/
+donorbro_env/
+.env
+routes/__pycache__
+backend.db
